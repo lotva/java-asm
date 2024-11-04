@@ -21,4 +21,9 @@ public class Command {
     public String[] getArgs() {
         return args;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
