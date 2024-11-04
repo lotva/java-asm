@@ -1,36 +1,32 @@
 import java.util.*;
 
 public class Program implements Iterable<Command> {
-    private final Command[] commands;
-    private int currentPosition = 0;
+    private final List<Command> commands;
     private int minMemoryInUse = 1025;
     private int maxMemoryInUse = -1;
 
     public Program() {
-        commands = new Command[20];
+        commands = new ArrayList<>();
     }
 
     public void add(Command command) {
-        commands[currentPosition] = command;
-        currentPosition++;
-
+        commands.add(command);
         RangeOfMemory(command);
     }
 
     public Command get(int n) throws Exception {
-        if (n < 0 || n > currentPosition) throw new Exception("Out of memory");
-        return commands[n];
+        if (n < 0 || n >= commands.size()) throw new Exception("Out of memory");
+        return commands.get(n);
     }
 
     public int getCurrentPosition() {
-        return currentPosition;
+        return commands.size();
     }
 
     public void MostPopularInstruction() {
         Map<String, Integer> commandOccurrencesCount = new HashMap<>();
 
         for (Command command : commands) {
-            if (command == null) continue;
             String name = command.getName();
             commandOccurrencesCount.put(name, commandOccurrencesCount.getOrDefault(name, 0) + 1);
         }
@@ -62,7 +58,7 @@ public class Program implements Iterable<Command> {
 
     public String GetRangeOfMemory() {
         if (minMemoryInUse == 1025 || maxMemoryInUse == -1) {
-            return "Memory not use";
+            return "Память не использована";
         }
 
         return "Диапазон адресов памяти: " + minMemoryInUse + "—" + maxMemoryInUse;
@@ -78,22 +74,6 @@ public class Program implements Iterable<Command> {
 
     @Override
     public Iterator<Command> iterator() {
-        return new Iterator<Command>() {
-            private int i = -1;
-
-            @Override
-            public boolean hasNext() {
-                return i + 1 < getCurrentPosition();
-            }
-
-            @Override
-            public Command next() {
-                i++;
-                if (i >= 0 && i < getCurrentPosition()) {
-                    return commands[i];
-                }
-                return null;
-            }
-        };
+        return commands.iterator();
     }
 }
