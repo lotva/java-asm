@@ -28,8 +28,8 @@ public class Main {
         program.forEach(command -> System.out.print(command + " "));
 
         System.out.println();
-        System.out.println(program.GetRangeOfMemory());
+        System.out.println(program.getRangeOfMemory());
 
-        program.MostPopularInstruction();
+        program.getMostPopularInstruction();
     }
 }

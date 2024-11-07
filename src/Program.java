@@ -11,7 +11,7 @@ public class Program implements Iterable<Command> {
 
     public void add(Command command) {
         commands.add(command);
-        RangeOfMemory(command);
+        updateRangeOfMemory(command);
     }
 
     public Command get(int n) throws Exception {
@@ -19,57 +19,57 @@ public class Program implements Iterable<Command> {
         return commands.get(n);
     }
 
-    public int getCurrentPosition() {
+    public int getCommandsCount() {
         return commands.size();
     }
 
-    public void MostPopularInstruction() {
-        Map<String, Integer> commandOccurrencesCount = new HashMap<>();
+    public void getMostPopularInstruction() {
+        Map<String, Integer> commandOccurrences = new HashMap<>();
 
         for (Command command : commands) {
             String name = command.getName();
-            commandOccurrencesCount.put(name, commandOccurrencesCount.getOrDefault(name, 0) + 1);
+            commandOccurrences.put(name, commandOccurrences.getOrDefault(name, 0) + 1);
         }
 
-        String mostPopularCommand = null;
+        String mostPopularInstruction = "";
         int maxCount = 0;
 
-        for (Map.Entry<String, Integer> entry : commandOccurrencesCount.entrySet()) {
+        for (Map.Entry<String, Integer> entry : commandOccurrences.entrySet()) {
             if (entry.getValue() > maxCount) {
-                mostPopularCommand = entry.getKey();
+                mostPopularInstruction = entry.getKey();
                 maxCount = entry.getValue();
             }
         }
 
-        if (mostPopularCommand != null) {
-            System.out.println("Самая популярная команда: " + mostPopularCommand + " (использована " + maxCount + " раз)");
+        if (mostPopularInstruction != null) {
+            System.out.println("Самая популярная команда: " + mostPopularInstruction + " (" + maxCount + ")");
         } else {
             System.out.println("Команд нет.");
         }
 
-        List<Map.Entry<String, Integer>> sortedCommands = new ArrayList<>(commandOccurrencesCount.entrySet());
+        List<Map.Entry<String, Integer>> sortedCommands = new ArrayList<>(commandOccurrences.entrySet());
         sortedCommands.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         System.out.println("Команды по убыванию популярности:");
         for (Map.Entry<String, Integer> entry : sortedCommands) {
-            System.out.println("Команда: " + entry.getKey() + ", Количество: " + entry.getValue());
+            System.out.println(entry.getKey() + " — " + entry.getValue());
         }
     }
 
-    public String GetRangeOfMemory() {
-        if (minMemoryInUse == 1025 || maxMemoryInUse == -1) {
-            return "Память не использована";
-        }
-
-        return "Диапазон адресов памяти: " + minMemoryInUse + "—" + maxMemoryInUse;
-    }
-
-    private void RangeOfMemory(Command c) {
+    private void updateRangeOfMemory(Command c) {
         if (Objects.equals(c.getName(), "init")) {
             int memory = Integer.parseInt(c.getArgs()[0]);
             minMemoryInUse = Math.min(minMemoryInUse, memory);
             maxMemoryInUse = Math.max(maxMemoryInUse, memory);
         }
+    }
+
+    public String getRangeOfMemory() {
+        if (minMemoryInUse == 1025 || maxMemoryInUse == -1) {
+            return "Память не использована";
+        }
+
+        return "Диапазон адресов памяти: " + minMemoryInUse + "—" + maxMemoryInUse;
     }
 
     @Override
