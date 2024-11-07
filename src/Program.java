@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Program implements Iterable<Command> {
     private final List<Command> commands;
@@ -24,36 +25,20 @@ public class Program implements Iterable<Command> {
     }
 
     public void getMostPopularInstruction() {
-        Map<String, Integer> commandOccurrences = new HashMap<>();
+        Map<String, Long> commandOccurrences = commands.stream()
+                .collect(Collectors.groupingBy(Command::getName, Collectors.counting()));
 
-        for (Command command : commands) {
-            String name = command.getName();
-            commandOccurrences.put(name, commandOccurrences.getOrDefault(name, 0) + 1);
-        }
-
-        String mostPopularInstruction = "";
-        int maxCount = 0;
-
-        for (Map.Entry<String, Integer> entry : commandOccurrences.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                mostPopularInstruction = entry.getKey();
-                maxCount = entry.getValue();
-            }
-        }
-
-        if (mostPopularInstruction != null) {
-            System.out.println("Самая популярная команда: " + mostPopularInstruction + " (" + maxCount + ")");
-        } else {
-            System.out.println("Команд нет.");
-        }
-
-        List<Map.Entry<String, Integer>> sortedCommands = new ArrayList<>(commandOccurrences.entrySet());
-        sortedCommands.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        commandOccurrences.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .ifPresentOrElse(
+                        entry -> System.out.println("Самая популярная команда: " + entry.getKey() + " (" + entry.getValue() + ")"),
+                        () -> System.out.println("Команд нет.")
+                );
 
         System.out.println("Команды по убыванию популярности:");
-        for (Map.Entry<String, Integer> entry : sortedCommands) {
-            System.out.println(entry.getKey() + " — " + entry.getValue());
-        }
+        commandOccurrences.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .forEach(entry -> System.out.println(entry.getKey() + " — " + entry.getValue()));
     }
 
     private void updateRangeOfMemory(Command c) {
